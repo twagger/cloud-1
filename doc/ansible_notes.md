@@ -1,6 +1,6 @@
-# Project notes
+# Ansible notes
 
-Notes about Ansible learning and the project in general.
+Notes about Ansible.
 
 ## Why use Ansible ?
 
@@ -148,9 +148,3 @@ Ansible can manage the dependencies between the host of a container and the cont
 ## Ansible tower
 
 **UI dashboard** allowing you to store automation tasls, manage the teams, configurations of the teams, ...
-
-## Steps
-
-1. Install Ansible : possible to install it in a virtual environment like conda with pip installer
-2. Configure Ansible to work with remote servers
-
