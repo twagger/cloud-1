@@ -125,7 +125,7 @@ The playbooks orchestrates the modules excecution
 Ansible maintain a list of servers with references so you can use it in the configuration files.
 
 Example of Hosts file :
-```ini
+```ruby
 10.24.0.100
 
 [webservers]
@@ -148,3 +148,6 @@ Ansible can manage the dependencies between the host of a container and the cont
 ## Ansible tower
 
 **UI dashboard** allowing you to store automation tasls, manage the teams, configurations of the teams, ...
+
+## Ansible directory structure
+
