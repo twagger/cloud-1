@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # This script is an installation script to create a dedicated conda environment
-# with Ansible
+# with Ansible in order to have everything well contained.
 
 function which_dl {
     # If operating system name contains Darwnin: MacOS. Else Linux
@@ -30,7 +30,6 @@ function when_conda_exist {
         printf "\e[31mKO\e[0m\n"
         printf "\e[33mCreating 42Cloud environnment:\e[0m\n"
         conda update -n base -c defaults conda -y
-        conda config --add channels conda-forge
         conda create --name 42Cloud-$USER python=3.10 ansible -y
     fi
 }
@@ -59,13 +58,12 @@ function set_conda {
         cd -
     fi
     printf "\e[33mInstalling conda:\e[0m\n"
-    sh $DL_LOCATION$SCRIPT -b -p $MINICONDA_PATH
+    bash $DL_LOCATION$SCRIPT -b -p $MINICONDA_PATH
     printf "\e[33mConda initial setup:\e[0m\n"
     $CONDA init $MY_SHELL
     $CONDA config --set auto_activate_base false
     printf "\e[33mCreating 42Cloud-$USER environnment:\e[0m\n"
     $CONDA update -n base -c defaults conda -y
-    $CONDA config --add channels conda-forge
     $CONDA create --name 42Cloud-$USER python=3.10 ansible -y
     printf "\e[33mLaunch the following command or restart your shell:\e[0m\n"
     if [ $MY_SHELL == "zsh" ]; then
@@ -75,23 +73,35 @@ function set_conda {
     fi
 }
 
-function setup_ansible {
+function set_ansible {
     # setup the basic Ansible config
-    ENV_PATH="/goinfre/$USER/miniconda3/envs/42Cloud-$USER/"
-    INVENTORY="ansible/inventory"
-    LIBRARY="ansible/library"
-    ROLES="ansible/roles"
+    printf "\n\e[33mAnsible basic setup:\e[0m\n"
+    ANSIBLE_HOME="${HOME}/.ansible/"
+    CONF="ansible.cfg"
+    HOSTS="hosts"
+    LIBRARY="library"
+    ROLES="roles"
+    # creating ~/.ansible/ folder if it don't exists
+    mkdir -p $ANSIBLE_HOME
     # copy the config file from ../conf in the proper location
-    printf "Copying ansible.cfg from conf folder : "
-    if [ -f "../conf/ansible.cfg" ]; then
-        cp "../conf/ansible.cfg" $ENV_PATH
+    printf "Copying ${CONF} from conf folder : "
+    if [ -f "../conf/${CONF}" ]; then
+        cp "../conf/${CONF}" $ANSIBLE_HOME
+        printf "\e[32mOK\e[0m\n"
+    else
+        printf "\e[31mKO\e[0m\n"
+    fi
+    # copy the hosts file from ../conf in the proper location
+    printf "Copying ${HOSTS} from conf folder : "
+    if [ -f "../conf/${HOSTS}" ]; then
+        cp "../conf/${HOSTS}" $ANSIBLE_HOME
         printf "\e[32mOK\e[0m\n"
     else
         printf "\e[31mKO\e[0m\n"
     fi
     # create the ansible configuration directories
     printf "Creating the ansible configuration directories : "
-    mkdir -p $ENV_PATH$INVENTORY $ENV_PATH$LIBRARY $ENV_PATH$ROLES
+    mkdir -p $ANSIBLE_HOME$LIBRARY $ANSIBLE_HOME$ROLES
     printf "\e[32mOK\e[0m\n"
 }
 
@@ -99,4 +109,4 @@ function setup_ansible {
 set_conda
 
 # Ansible setup
-setup_ansible
+set_ansible
