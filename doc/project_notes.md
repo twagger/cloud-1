@@ -56,28 +56,28 @@ ssh user_name@hostname
 
 As we are using a conda environment for our ansible installation on the controller machine, we need to have specific files in specific places :
 
-#### /path/to/conda/environment/ansible.cfg
+#### $HOME/.ansible/ansible.cfg
 ```ruby
 [defaults]
-inventory = /path/to/conda/environment/ansible/inventory
-library = /path/to/conda/environment/ansible/library
-roles_path = /path/to/conda/environment/ansible/roles
+inventory = $HOME/.ansible/inventory
+library = $HOME/.ansible/library
+roles_path = $HOME/.ansible/roles
 ```
 
 Of course, to simplify the setup of the environment, all of this specific configuration should be part of the environment installation script.
 
 We can reuse the conda installation script from 42AI and modify it so it is dedicated to install the proper 'cloud' environment with ansible and the default config.
 
-### Update inventory file
+### Update inventory (hosts) file
 
 We should update the inventory file of the controller machine so it can effectively know the nodes it can join.
 
-create a `hosts` file in the ansible configuration folder `/path/to/conda/environment/ansible/inventory`
+create a `hosts` file in the ansible home folder `$HOME/.ansible/`
 
-Example of what the host file could contain (IPs / FQDN of the scaleway server(s)) :
+Example of what a minimal host file could contain (IPs / FQDN of the scaleway server(s)) :
 
 ```ruby
-10.12.5.53
+8.12.5.53
 ```
 
 ### Test connectivity
