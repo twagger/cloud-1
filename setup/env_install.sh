@@ -2,6 +2,7 @@
 #
 # This script is an installation script to create a dedicated conda environment
 # with Ansible in order to have everything well contained.
+# it should be launched with . ./env_install so the env variable export works
 
 function which_dl {
     # If operating system name contains Darwnin: MacOS. Else Linux
