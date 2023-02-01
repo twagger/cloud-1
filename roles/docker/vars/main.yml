@@ -1,0 +1,19 @@
+---
+docker_uninstall:
+  - docker
+  - docker-engine
+  - docker.io
+  - containerd
+  - runc
+
+install_deps:
+  - ca-certificates
+  - curl
+  - gnupg
+  - lsb-release
+
+docker_install:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - docker-compose-plugin

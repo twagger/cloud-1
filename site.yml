@@ -1,0 +1,11 @@
+# - name: Prepare server for ansible use
+#   hosts: all
+#   remote_user: root
+#   roles:
+#     - common
+    
+- name: Prepare server for webapp deployment
+  hosts: all
+  remote_user: root
+  roles:
+    - docker

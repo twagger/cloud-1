@@ -1,0 +1,54 @@
+---
+# Cleaning of previous installs
+- name: Remove previous docker installation
+  apt:
+    name: "{{ docker_uninstall }}"
+    state: absent
+    purge: yes
+
+# Install dependencies
+- name: Install docker dependencies with a cache update before
+  apt:
+    update_cache: yes
+    name: "{{ install_deps }}"
+    state: present
+
+# Add the repo to package manager
+- name: Create a folder for keyrings if it don't exists
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+
+- name: Download the official docker repo gpg key
+  uri:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    dest: /tmp/docker.gpg
+    status_code: [200,304]
+
+- name: Install the docker's gpg key
+  shell: gpg --dearmor -o /etc/apt/keyrings/docker.gpg /tmp/docker.gpg
+
+- name: Set up the docker repository
+  apt_repository:
+    repo: deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] \
+          https://download.docker.com/linux/ubuntu jammy stable
+    state: present
+
+# Install docker
+- name: Install docker
+  apt:
+    update_cache: yes
+    name: "{{ docker_install }}"
+
+# Post install configuration
+- name: Create the docker group
+  group:
+    name: docker
+    state: present
+
+- name: add the ansadmin user in docker group
+  user:
+    name: ansadmin
+    groups: docker
+    append: yes
+    state: present

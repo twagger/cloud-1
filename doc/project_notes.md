@@ -90,8 +90,16 @@ ansible all -m ping
 
 we should have a response from all servers with `SUCCESS` and a `pong` response showing that the servr is answering and that the global configuration is ok at this point.
 
-# Points to study
+# Points to study / Thoughts
 
 - Working with dynamic inventory as the IP adresses are not necessary fixed.
 - Role (purpose of the host) structure for the project
 - Staging / production environment ?
+
+# Steps for the project
+
+1. create an ansible home directory
+2. initiate the production inventory file with scaleway server (and possibly another server)
+3. create the project structure : roles and playbooks
+    - common : installation of docker, docker-compose
+    - 

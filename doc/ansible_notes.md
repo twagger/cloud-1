@@ -179,8 +179,8 @@ The best practices of Ansible user guide version **2.8** recommend a directory s
     |   |   |── tasks/     
     |   |   |   └── main.yml          #  <-- tasks file can include smaller files if warranted
     |   |   |── handlers/         
-    |   |   |   └── main.yml          #  <-- handlers file
-    |   |   |── templates/            #  <-- files for use with the template resource
+    |   |   |   └── main.yml          #  <-- handlers file (repetitive tasks that can be called by other tasks)
+    |   |   |── templates/            #  <-- files for use with the template resource to configure systems
     |   |   |   └── ntp.conf.j2       #  <------- templates end in .j2
     |   |   |── files/            
     |   |   |   |── bar.txt           #  <-- files for use with the copy resource

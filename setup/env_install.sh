@@ -83,27 +83,9 @@ function set_ansible {
     HOSTS="hosts"
     LIBRARY="library"
     ROLES="roles"
-    # creating ~/.ansible/ folder if it don't exists
-    mkdir -p $ANSIBLE_HOME
-    # copy the config file from ../conf in the proper location
-    printf "Copying ${CONF} from conf folder : "
-    if [ -f "../conf/${CONF}" ]; then
-        cp "../conf/${CONF}" $ANSIBLE_HOME
-        printf "\e[32mOK\e[0m\n"
-    else
-        printf "\e[31mKO\e[0m\n"
-    fi
-    # copy the hosts file from ../conf in the proper location
-    printf "Copying ${HOSTS} from conf folder : "
-    if [ -f "../conf/${HOSTS}" ]; then
-        cp "../conf/${HOSTS}" $ANSIBLE_HOME
-        printf "\e[32mOK\e[0m\n"
-    else
-        printf "\e[31mKO\e[0m\n"
-    fi
-    # create the ansible configuration directories
-    printf "Creating the ansible configuration directories : "
-    mkdir -p $ANSIBLE_HOME$LIBRARY $ANSIBLE_HOME$ROLES
+    # declaring the .. folder as the ansible home
+    printf "declaring the ansible home folder : "
+    export ANSIBLE_CONFIG=../ansible.cfg
     printf "\e[32mOK\e[0m\n"
 }
 

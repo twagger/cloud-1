@@ -1,0 +1,12 @@
+---
+# Specific user to work with ansible
+- name: Add the user 'ansadmin' for ansible tasks
+  user:
+    name: ansadmin
+    comment: Ansible Administrator
+    groups: sudo
+    append: yes
+    create_home: no
+    state: present
+
+# Authorize the user to connect via ssh
