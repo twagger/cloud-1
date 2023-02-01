@@ -151,3 +151,73 @@ Ansible can manage the dependencies between the host of a container and the cont
 
 ## Ansible directory structure
 
+The best practices of Ansible user guide version **2.8** recommend a directory structure like below : 
+
+
+```txt
+    .                           
+    ├── production                    # inventory file for production servers
+    ├── staging                       # inventory file for staging environment
+
+    ├── group_vars/                   
+    |   ├── group1.yml                # here we assign variables to particular groups
+    |   └── group2.yml                # here we assign variables to particular groups
+    |── host_vars/ 
+    │   ├── hostname1.yml             # here we assign variables to particular systems
+    │   └──  hostname2.yml             # here we assign variables to particular systems
+
+    |── library/                      # if any custom modules, put them here (optional)
+    |── module_utils/                 # if any custom module_utils to support modules, put them here (optional)
+    |── filter_plugins/               # if any custom filter plugins, put them here (optional)
+
+    |── site.yml                      # master playbook
+    |── webservers.yml                # playbook for webserver tier
+    |── dbservers.yml                 # playbook for dbserver tier
+
+    |── roles/
+    |   |── common/                   # this hierarchy represents a "role"
+    |   |   |── tasks/     
+    |   |   |   └── main.yml          #  <-- tasks file can include smaller files if warranted
+    |   |   |── handlers/         
+    |   |   |   └── main.yml          #  <-- handlers file
+    |   |   |── templates/            #  <-- files for use with the template resource
+    |   |   |   └── ntp.conf.j2       #  <------- templates end in .j2
+    |   |   |── files/            
+    |   |   |   |── bar.txt           #  <-- files for use with the copy resource
+    |   |   |   └── foo.sh            #  <-- script files for use with the script resource
+    |   |   |── vars/             
+    |   |   |   └── main.yml          #  <-- variables associated with this role
+    |   |   |── defaults/         
+    |   |   |   └── main.yml          #  <-- default lower priority variables for this role
+    |   |   |── meta/             
+    |   |   |   └── main.yml          #  <-- role dependencies
+    |   |   |── library/              # roles can also include custom modules
+    |   |   |── module_utils/         # roles can also include custom module_utils
+    |   |   └── lookup_plugins/       # or other types of plugins, like lookup in this case
+    |   └──
+  
+    |── webtier/                      # same kind of structure as "common" was above, done for the webtier role
+    |── monitoring/           
+    └── fooapp/               
+      
+```
+
+## Ansible roles
+
+The concept of role in Ansible allows to categorize the hosts based on their intended purpose.
+
+It is an "organization" feature that makes the whole thing cleaner and easier to manage.
+
+## Module state
+
+In Ansible, the state "present" or "absent" is used in modules to indicate the desired state of a resource or object being managed by the module.
+
+The "present" state means that the module should create the resource or object if it doesn't exist, or modify it if necessary to match the specified configuration.
+
+The "absent" state means that the module should delete the resource or object if it exists, or do nothing if it doesn't exist.
+
+For example, when using the "user" module to manage user accounts, you can specify "state: present" to create a new user or ensure that an existing user has the specified properties, or "state: absent" to delete a user.
+
+In this way, the state setting allows you to easily manage the desired state of resources in your environment, and ensures that your infrastructure stays in the desired state even if changes are made outside of Ansible.
+
+**It is a best practice to always specify the state.**

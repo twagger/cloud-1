@@ -90,3 +90,8 @@ ansible all -m ping
 
 we should have a response from all servers with `SUCCESS` and a `pong` response showing that the servr is answering and that the global configuration is ok at this point.
 
+# Points to study
+
+- Working with dynamic inventory as the IP adresses are not necessary fixed.
+- Role (purpose of the host) structure for the project
+- Staging / production environment ?
