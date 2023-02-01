@@ -25,10 +25,10 @@
     dest: /tmp/docker.gpg
     status_code: [200,304]
 
-- name: Install the docker's gpg key
+- name: Install the docker's gpg key # ca bloque ici
   shell: gpg --dearmor -o /etc/apt/keyrings/docker.gpg /tmp/docker.gpg
 
-- name: Set up the docker repository
+- name: Set up the docker repository # et ici
   apt_repository:
     repo: deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] \
           https://download.docker.com/linux/ubuntu jammy stable
