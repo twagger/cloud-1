@@ -7,5 +7,15 @@
 - name: Prepare server for webapp deployment
   hosts: all
   remote_user: root
+  tags: docker
   roles:
     - docker
+
+- name: Deploy the webapp with Docker compose
+  hosts: all
+  remote_user: root
+  tags: webapp
+  roles:
+    - webapp
+
+

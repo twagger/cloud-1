@@ -1,0 +1,12 @@
+---
+# Create a directory named /app
+- name: Create directory /app
+  file:
+    path: /app
+    state: directory
+
+- name: Copy webapp files
+  synchronize:
+    src: "{{ role_path }}/files/"
+    dest: "/app"
+  delegate_to: localhost
