@@ -221,3 +221,21 @@ For example, when using the "user" module to manage user accounts, you can speci
 In this way, the state setting allows you to easily manage the desired state of resources in your environment, and ensures that your infrastructure stays in the desired state even if changes are made outside of Ansible.
 
 **It is a best practice to always specify the state.**
+
+## Tips and tricks
+
+### The lookup function (Ansible 2.4 and later)
+
+The lookup function is a Ansible feature that allows you to access external data sources, like environment variables, files, and more, from within your playbooks and roles. The lookup function returns the contents of a file, or the result of a shell command, and can be used to populate variables with data from external sources.
+
+The syntax for using the lookup function is:
+
+```python
+{{ lookup('type', 'arguments') }}
+```
+
+where type is the type of external data source to access, and arguments are the arguments required for the specified type. For example, if you want to run a shell command and capture its output, you can use the shell type like this:
+
+```yaml
+architecture: "{{ lookup('shell', 'dpkg --print-architecture') }}"
+```

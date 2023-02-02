@@ -1,4 +1,14 @@
 ---
+# Install dependencies needed by shell vars first
+- name: Install lsb_release
+  apt:
+    update_cache: yes
+    name: lsb-release
+    state: present
+
+# include vars AFTER having the necessary dependencies installed
+- include_vars: vars/main.yml
+
 # Cleaning of previous installs
 - name: Remove previous docker installation
   apt:
@@ -6,7 +16,7 @@
     state: absent
     purge: yes
 
-# Install dependencies
+# Installation dependencies
 - name: Install docker dependencies with a cache update before
   apt:
     update_cache: yes
@@ -25,14 +35,14 @@
     dest: /tmp/docker.gpg
     status_code: [200,304]
 
-- name: Install the docker's gpg key # ca bloque ici
-  shell: gpg --dearmor -o /etc/apt/keyrings/docker.gpg /tmp/docker.gpg
+- name: Install the docker's gpg key
+  shell: gpg --dearmor --batch --yes -o /etc/apt/keyrings/docker.gpg /tmp/docker.gpg
 
-- name: Set up the docker repository # et ici
+- name: Set up the docker repository
   apt_repository:
-    repo: deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] \
-          https://download.docker.com/linux/ubuntu jammy stable
+    repo: deb [arch={{ arch }} signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu {{ release }} stable
     state: present
+    filename: docker
 
 # Install docker
 - name: Install docker
@@ -46,9 +56,9 @@
     name: docker
     state: present
 
-- name: add the ansadmin user in docker group
+- name: add the current user in docker group
   user:
-    name: ansadmin
+    name: "{{ current_user }}"
     groups: docker
     append: yes
     state: present
