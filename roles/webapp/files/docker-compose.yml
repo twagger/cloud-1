@@ -33,7 +33,10 @@ services:
     restart: always
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "--silent"]
-      start_period: 20s
+      interval: 30s
+      timeout: 30s
+      retries: 15
+      start_period: 30s
     volumes: ['db_data:/var/lib/mysql']
     networks: ['inception_network']
 

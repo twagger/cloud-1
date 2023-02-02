@@ -10,3 +10,53 @@
     src: "{{ role_path }}/files/"
     dest: "/app"
   delegate_to: localhost
+
+# update user id and group id with remote server root
+- name: get the user id
+  shell: id -u
+  register: user_id
+
+- name: get the group id
+  shell: id -g
+  register: group_id
+
+- name: update env file with user id
+  lineinfile:
+    path: /app/.env
+    search_string: 'USER_ID='
+    # line: "USER_ID={{ user_id.stdout }}"
+    line: "USER_ID=1002"
+
+- name: update env file with group id
+  lineinfile:
+    path: /app/.env
+    search_string: 'GROUP_ID='
+    # line: "GROUP_ID={{ group_id.stdout }}"
+    line: "GROUP_ID=1002"
+
+# create folders for data binding
+- name: Create database bind folder
+  file:
+    path: "{{ bind_folder }}/db"
+    state: directory
+
+- name: Create wordpress bind folder
+  file:
+    path: "{{ bind_folder }}/wordpress"
+    state: directory
+
+- name: update env file with group id
+  lineinfile:
+    path: /app/.env
+    search_string: 'DATABIND='
+    line: "DATABIND={{ bind_folder }}"
+
+# # Launch docker-compose
+# - name: launch the webapp with docker compose
+#   docker_compose:
+#     project_src: /app
+#     state: present
+
+# Launch docker-compose
+- name: launch the webapp with docker compose
+  shell: docker compose -f /app/docker-compose.yml --env-file /app/.env up -d

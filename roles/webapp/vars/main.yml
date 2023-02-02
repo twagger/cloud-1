@@ -1,3 +1,2 @@
 ---
-# # get all files to transfer for this role
-# files: "{{ lookup('lines', 'find {{ role_path }}/files/') }}"
+bind_folder: "/var"
