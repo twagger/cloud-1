@@ -1,0 +1,5 @@
+---
+# default variables
+arch: amd64
+release: jammy
+current_user: root

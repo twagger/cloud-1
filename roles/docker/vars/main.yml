@@ -8,6 +8,7 @@ docker_uninstall:
 
 install_deps:
   - ca-certificates
+  - lsb-release
   - gnupg
 
 docker_install:
@@ -18,6 +19,6 @@ docker_install:
 
 # variables from q commands (executed when called by the playbook at 
 # runtime)
-arch: "{{ lookup('lines', 'dpkg --print-architecture') }}"
-release: "{{ lookup('lines', 'lsb_release -cs') }}"
-current_user: "{{ lookup('lines', 'echo $USER') }}"
+# arch: "{{ lookup('lines', 'dpkg --print-architecture') }}"
+# release: "{{ lookup('lines', 'lsb_release -cs') }}"
+# current_user: "{{ lookup('lines', 'echo $USER') }}"
