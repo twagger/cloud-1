@@ -1,21 +1,17 @@
 ---
 # Specific user to work with ansible
-# - name: Add the user 'ansadmin' for ansible tasks
-#   user:
-#     name: ansadmin
-#     comment: Ansible Administrator
-#     groups: sudo
-#     append: yes
-#     create_home: no
-#     state: present
+- name: Add the user 'ansadmin' for ansible tasks
+  user:
+    name: ansadmin
+    comment: Ansible Administrator
+    shell: "/bin/bash"
+    create_home: yes
+    state: present
 
-# Authorize the user to connect via ssh
-
-- name: Print all available facts
-  ansible.builtin.debug:
-    var: ansible_facts["architecture"]
-
-
-- name: Print all available facts
-  ansible.builtin.debug:
-    var: ansible_facts["lsb"]["codename"]
+# TODO :
+# Create .ssh folder for the user
+# Chown the .ssh folder
+# Chmod 700 the ssh folder
+# Create authorized_keys file with user's public key in it
+# restart ssh service
+# possibility to use sudo without password (/etc/sudoers > ansuser ALL=(ALL) NOPASSWD: ALL)

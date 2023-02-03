@@ -13,7 +13,7 @@
 
 - name: Deploy the webapp with Docker compose
   hosts: all
-  remote_user: root
+  remote_user: ansadmin
   tags: webapp
   roles:
     - webapp

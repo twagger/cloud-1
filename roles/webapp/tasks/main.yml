@@ -3,6 +3,7 @@
 - name: Create directory /app
   file:
     path: /app
+    owner: "{{ ansible_ssh_user }}"
     state: directory
 
 - name: Copy webapp files
@@ -24,25 +25,33 @@
   lineinfile:
     path: /app/.env
     search_string: 'USER_ID='
-    # line: "USER_ID={{ user_id.stdout }}"
-    line: "USER_ID=1002"
+    line: "USER_ID={{ user_id.stdout }}"
+    # line: "USER_ID=1002"
 
 - name: update env file with group id
   lineinfile:
     path: /app/.env
     search_string: 'GROUP_ID='
-    # line: "GROUP_ID={{ group_id.stdout }}"
-    line: "GROUP_ID=1002"
+    line: "GROUP_ID={{ group_id.stdout }}"
+    # line: "GROUP_ID=1002"
 
 # create folders for data binding
 - name: Create database bind folder
+  become: yes
+  become_user: root
   file:
     path: "{{ bind_folder }}/db"
+    owner: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"
     state: directory
 
 - name: Create wordpress bind folder
+  become: yes
+  become_user: root
   file:
     path: "{{ bind_folder }}/wordpress"
+    owner: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"
     state: directory
 
 - name: update env file with group id
@@ -58,5 +67,5 @@
 #     state: present
 
 # Launch docker-compose
-- name: launch the webapp with docker compose
-  shell: docker compose -f /app/docker-compose.yml --env-file /app/.env up -d
+# - name: launch the webapp with docker compose
+#   shell: docker compose -f /app/docker-compose.yml --env-file /app/.env up -d
