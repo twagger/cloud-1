@@ -26,14 +26,12 @@
     path: /app/.env
     search_string: 'USER_ID='
     line: "USER_ID={{ user_id.stdout }}"
-    # line: "USER_ID=1002"
 
 - name: update env file with group id
   lineinfile:
     path: /app/.env
     search_string: 'GROUP_ID='
     line: "GROUP_ID={{ group_id.stdout }}"
-    # line: "GROUP_ID=1002"
 
 # create folders for data binding
 - name: Create database bind folder
@@ -67,5 +65,5 @@
 #     state: present
 
 # Launch docker-compose
-# - name: launch the webapp with docker compose
-#   shell: docker compose -f /app/docker-compose.yml --env-file /app/.env up -d
+- name: launch the webapp with docker compose
+  shell: docker compose -f /app/docker-compose.yml --env-file /app/.env up -d

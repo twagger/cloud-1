@@ -1,17 +1,43 @@
 ---
 # Specific user to work with ansible
-- name: Add the user 'ansadmin' for ansible tasks
+- name: Add a user for ansible tasks
   user:
-    name: ansadmin
-    comment: Ansible Administrator
-    shell: "/bin/bash"
+    name: "{{ user }}"
+    comment: "{{ user_comment }}"
+    shell: "{{ user_shell }}"
     create_home: yes
     state: present
 
-# TODO :
 # Create .ssh folder for the user
-# Chown the .ssh folder
-# Chmod 700 the ssh folder
+- name: Create a folder for keyrings if it don't exists
+  file:
+    path: /etc/apt/keyrings
+    owner: "{{ user }}"
+    group: "{{ user }}"
+    mode: 0700
+    state: directory
+
 # Create authorized_keys file with user's public key in it
+- name: Create authorized_keys file
+  copy:
+    src: "{{ public_key }}"
+    dest: "/home/{{ user }}/.ssh/authorized_keys"
+
 # restart ssh service
-# possibility to use sudo without password (/etc/sudoers > ansuser ALL=(ALL) NOPASSWD: ALL)
+- name : Restart ssh
+  service:
+    name: sshd
+    state: restarted
+    enabled: true
+
+# possibility to use sudo without password
+# (/etc/sudoers > ansuser ALL=(ALL) NOPASSWD: ALL)
+- name: Enable possibility for the new user to use sudo without pass
+  lineinfile:
+    path: /etc/sudoers
+    state: present
+    line: "{{ user }} ALL=(ALL) NOPASSWD:ALL"
+
+# - name: Print all available facts
+#   ansible.builtin.debug:
+#     var: ansible_facts["default_ipv4"]["address"]
