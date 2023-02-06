@@ -9,6 +9,7 @@ LABEL   org.opencontainers.image.version=0.1.0
 # args for proper user rights management
 ARG     USER_ID=${USER_ID}
 ARG     GROUP_ID=${GROUP_ID}
+ARG     SITE_URL=${SITE_URL}
 
 # add specific user and group with current host userid and groupid to run the process
 RUN     addgroup -S -g ${GROUP_ID} hugo \
@@ -49,7 +50,7 @@ USER    hugo
 #CMD [ "tail", "-f", "/dev/null" ]
 CMD     ["hugo", "server", \
          "--bind=0.0.0.0", \
-         "--baseURL=https://twagner.42.fr/me", \
+         "--baseURL=${SITE_URL}/me", \
          "-p", "1313", \
          "--logFile=/dev/stdout", \
         "--appendPort=false"]

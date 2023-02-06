@@ -11,6 +11,7 @@
   synchronize:
     src: "{{ role_path }}/files/"
     dest: "/app"
+    delete: yes
   vars:
     ans_user: "{{ ansible_user }}"
   delegate_to: localhost
@@ -19,7 +20,13 @@
 - name: copy nginx templated conf file
   template:
     src: www.conf.j2
-    dest: /app/requirements/nginx/www.conf
+    dest: /app/bonus/nginx/www.conf
+
+# copy hugo templated conf
+- name: copy hugo templated conf file
+  template:
+    src: config.toml.j2
+    dest: /app/bonus/hugo/conf/config.toml
 
 # update user id and group id with remote server root
 - name: get the user id
@@ -43,23 +50,18 @@
     line: "GROUP_ID={{ group_id.stdout }}"
 
 # create folders for data binding
-- name: create database bind folder
+- name: create database and wp bind folder
   become: yes
   become_user: root
   file:
-    path: "{{ bind_folder }}/db"
+    path: "{{ bind_folder }}/{{ item }}"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     state: directory
-
-- name: create wordpress bind folder
-  become: yes
-  become_user: root
-  file:
-    path: "{{ bind_folder }}/wordpress"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    state: directory
+  with_items:
+    - db
+    - wordpress
+    - hugo
 
 - name: update env file with group id
   lineinfile:

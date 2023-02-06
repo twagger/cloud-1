@@ -5,14 +5,19 @@ services:
   nginx:
     image: nginx:${TAG}
     build: 
-      context: ./requirements/nginx
+      context: ./
+      dockerfile: ./bonus/nginx/Dockerfile
       args:
         - USER_ID=${USER_ID}
         - GROUP_ID=${GROUP_ID}
     container_name: nginx
     depends_on:
       wordpress:
-        condition: service_started
+        condition: service_healthy
+      adminer:
+        condition: service_healthy
+      hugo:
+          condition: service_healthy
     restart: always
     ports: ['443:443']
     volumes: ['wordpress_data:/var/www/wordpress']
@@ -33,10 +38,7 @@ services:
     restart: always
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "--silent"]
-      interval: 30s
-      timeout: 30s
-      retries: 15
-      start_period: 30s
+      start_period: 20s
     volumes: ['db_data:/var/lib/mysql']
     networks: ['inception_network']
 
@@ -46,7 +48,8 @@ services:
       mariadb:
         condition: service_healthy
     build:
-      context: ./requirements/wordpress
+      context: ./
+      dockerfile: ./bonus/wordpress/Dockerfile
       args:
         - USER_ID=${USER_ID}
         - GROUP_ID=${GROUP_ID}
@@ -65,12 +68,83 @@ services:
       - WP_DB_PASSWORD=${WORDPRESS_DB_PASSWORD}
     container_name: wordpress
     restart: always
+    healthcheck:
+      test: netstat -an | grep 9000 > /dev/null; if [ 0 != $$? ]; then exit 1; fi;
+      start_period: 10s
     volumes: ['wordpress_data:/var/www/wordpress']
+    networks: ['inception_network']
+
+  redis:
+    image: redis:${TAG}
+    build: 
+      context: ./bonus/redis
+      args:
+        - USER_ID=${USER_ID}
+        - GROUP_ID=${GROUP_ID}
+    container_name: redis
+    restart: always
+    networks: ['inception_network']
+
+  ftp:
+    image: ftp:${TAG}
+    build: 
+      context: ./bonus/ftp
+      args:
+        - USER_ID=${USER_ID}
+        - GROUP_ID=${GROUP_ID}
+    container_name: ftp
+    restart: always
+    ports: ['7042:7042']
+    volumes: ['wordpress_data:/var/www/wordpress']
+    networks: ['inception_network']
+
+  adminer:
+    image: adminer:${TAG}
+    build: 
+      context: ./bonus/adminer
+      args:
+        - USER_ID=${USER_ID}
+        - GROUP_ID=${GROUP_ID}
+    container_name: adminer
+    restart: always
+    healthcheck:
+      test: netstat -an | grep 9042 > /dev/null; if [ 0 != $$? ]; then exit 1; fi;
+      interval: 10s
+      start_period: 10s
+    networks: ['inception_network']
+  
+  hugo:
+    image: hugo:${TAG}
+    build: 
+      context: ./bonus/hugo
+      args:
+        - USER_ID=${USER_ID}
+        - GROUP_ID=${GROUP_ID}
+        - SITE_URL=${WORDPRESS_SITE_URL}
+    container_name: hugo
+    healthcheck:
+      test: netstat -an | grep 1313 > /dev/null; if [ 0 != $$? ]; then exit 1; fi;
+      interval: 10s
+      start_period: 10s
+    restart: always
+    networks: ['inception_network']
+    environment:
+      - SITE_URL=${WORDPRESS_SITE_URL}
+    
+  cadvisor:
+    image: cadvisor:${TAG}
+    build: 
+      context: ./bonus/cadvisor
+      args:
+        - USER_ID=${USER_ID}
+        - GROUP_ID=${GROUP_ID}
+    container_name: cadvisor
+    volumes: ['/var/run/docker.sock:/var/run/docker.sock:rw']
+    restart: always
     networks: ['inception_network']
 
 networks:
   inception_network:
-    driver: bridge
     name: inception_network
 
 volumes:
