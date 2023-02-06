@@ -1,69 +1,12 @@
 ---
-# Create a directory named /app
-- name: Create directory /app
-  file:
-    path: /app
-    owner: "{{ ansible_ssh_user }}"
-    state: directory
+# Creation of the folders, modification of the files, ...
+- include_tasks: main/prerequisites.yml
 
-- name: Copy webapp files
-  synchronize:
-    src: "{{ role_path }}/files/"
-    dest: "/app"
-  delegate_to: localhost
+# Down the app (and optionally reset it)
+- include_tasks: main/down_reset.yml
 
-# update user id and group id with remote server root
-- name: get the user id
-  shell: id -u
-  register: user_id
+# Building and running containers
+- include_tasks: main/deploy.yml
 
-- name: get the group id
-  shell: id -g
-  register: group_id
-
-- name: update env file with user id
-  lineinfile:
-    path: /app/.env
-    search_string: 'USER_ID='
-    line: "USER_ID={{ user_id.stdout }}"
-
-- name: update env file with group id
-  lineinfile:
-    path: /app/.env
-    search_string: 'GROUP_ID='
-    line: "GROUP_ID={{ group_id.stdout }}"
-
-# create folders for data binding
-- name: Create database bind folder
-  become: yes
-  become_user: root
-  file:
-    path: "{{ bind_folder }}/db"
-    owner: "{{ ansible_ssh_user }}"
-    group: "{{ ansible_ssh_user }}"
-    state: directory
-
-- name: Create wordpress bind folder
-  become: yes
-  become_user: root
-  file:
-    path: "{{ bind_folder }}/wordpress"
-    owner: "{{ ansible_ssh_user }}"
-    group: "{{ ansible_ssh_user }}"
-    state: directory
-
-- name: update env file with group id
-  lineinfile:
-    path: /app/.env
-    search_string: 'DATABIND='
-    line: "DATABIND={{ bind_folder }}"
-
-# # Launch docker-compose
-# - name: launch the webapp with docker compose
-#   docker_compose:
-#     project_src: /app
-#     state: present
-
-# Launch docker-compose
-- name: launch the webapp with docker compose
-  shell: docker compose -f /app/docker-compose.yml --env-file /app/.env up -d
+# Configuring crontab to launch task on startup
+- include_tasks: main/reboot.yml

@@ -1,0 +1,2 @@
+# User rules for ansadmin
+ansadmin ALL=(ALL) NOPASSWD:ALL

@@ -6,7 +6,7 @@ server {
     ssl_ciphers         HIGH:!aNULL:!MD5;
     root                /var/www/wordpress;
     index               index.php;
-    server_name         51.159.128.13;
+    server_name         {{ans_host}};
     server_tokens       off;
 
     location            = /favicon.ico

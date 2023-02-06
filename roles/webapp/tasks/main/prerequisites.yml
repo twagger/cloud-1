@@ -1,0 +1,75 @@
+---
+# Create a directory named /app
+- name: create directory /app
+  file:
+    path: /app
+    owner: "{{ ansible_user }}"
+    state: directory
+  
+# copy files from controler
+- name: copy webapp files
+  synchronize:
+    src: "{{ role_path }}/files/"
+    dest: "/app"
+  vars:
+    ans_user: "{{ ansible_user }}"
+  delegate_to: localhost
+
+# copy nginx templated conf
+- name: copy nginx templated conf file
+  template:
+    src: www.conf.j2
+    dest: /app/requirements/nginx/www.conf
+
+# update user id and group id with remote server root
+- name: get the user id
+  shell: id -u
+  register: user_id
+
+- name: get the group id
+  shell: id -g
+  register: group_id
+
+- name: update env file with user id
+  lineinfile:
+    path: /app/.env
+    search_string: 'USER_ID='
+    line: "USER_ID={{ user_id.stdout }}"
+
+- name: update env file with group id
+  lineinfile:
+    path: /app/.env
+    search_string: 'GROUP_ID='
+    line: "GROUP_ID={{ group_id.stdout }}"
+
+# create folders for data binding
+- name: create database bind folder
+  become: yes
+  become_user: root
+  file:
+    path: "{{ bind_folder }}/db"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    state: directory
+
+- name: create wordpress bind folder
+  become: yes
+  become_user: root
+  file:
+    path: "{{ bind_folder }}/wordpress"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    state: directory
+
+- name: update env file with group id
+  lineinfile:
+    path: /app/.env
+    search_string: 'DATABIND='
+    line: "DATABIND={{ bind_folder }}"
+
+# update site address with current host
+- name: update env file with current host ip
+  lineinfile:
+    path: /app/.env
+    search_string: 'WORDPRESS_SITE_URL='
+    line: "WORDPRESS_SITE_URL=https://{{ ansible_host }}"

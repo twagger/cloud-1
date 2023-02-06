@@ -9,9 +9,9 @@
     state: present
 
 # Create .ssh folder for the user
-- name: Create a folder for keyrings if it don't exists
+- name: Create a folder for ssh if it don't exists
   file:
-    path: /etc/apt/keyrings
+    path: /home/{{ user }}/.ssh/
     owner: "{{ user }}"
     group: "{{ user }}"
     mode: 0700
@@ -31,13 +31,7 @@
     enabled: true
 
 # possibility to use sudo without password
-# (/etc/sudoers > ansuser ALL=(ALL) NOPASSWD: ALL)
-- name: Enable possibility for the new user to use sudo without pass
-  lineinfile:
-    path: /etc/sudoers
-    state: present
-    line: "{{ user }} ALL=(ALL) NOPASSWD:ALL"
-
-# - name: Print all available facts
-#   ansible.builtin.debug:
-#     var: ansible_facts["default_ipv4"]["address"]
+- name: copy ansible-users file to the node for sudo access
+  copy:
+    src: "ansible-users"
+    dest: "/etc/sudoers.d/"

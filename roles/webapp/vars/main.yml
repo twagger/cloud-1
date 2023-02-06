@@ -1,3 +1,5 @@
 ---
-# bind_folder: "/home/{{ ansible_ssh_user }}"
 bind_folder: "/var"
+ans_user: "{{ ansible_user }}"
+ans_host: "{{ ansible_host }}"
+reset: false
