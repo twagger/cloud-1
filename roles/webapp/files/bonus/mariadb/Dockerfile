@@ -10,6 +10,8 @@ LABEL   org.opencontainers.image.version=0.1.0
 ARG     USER_ID=${USER_ID}
 ARG     GROUP_ID=${GROUP_ID}
 
+COPY    script/docker-entrypoint.sh /usr/local/bin/
+
 # install MariaDB from package manager and shadow (login and pass utilities)
 RUN     apk update && apk upgrade && apk add --update --no-cache \
             mariadb \
@@ -39,13 +41,17 @@ RUN     apk update && apk upgrade && apk add --update --no-cache \
         /etc/my.cnf.d/mariadb-server.cnf \
 \
  &&     sed -i "s|.*skip-networking.*|#skip-networking|g" \
-        /etc/my.cnf.d/mariadb-server.cnf
+        /etc/my.cnf.d/mariadb-server.cnf \
+\
+# make entrypoint executable
+ &&     chmod +x /usr/local/bin/docker-entrypoint.sh
+
+COPY    conf/db_config.sql          /tmp/mysql
+COPY    conf/patch_auth.txt         /tmp/mysql
 
 EXPOSE  3306
 
-COPY    script/docker-entrypoint.sh /usr/local/bin/
-COPY    conf/db_config.sql          /tmp/mysql
-COPY    conf/patch_auth.txt         /tmp/mysql
+
 
 # launch command as non root
 USER    mysql

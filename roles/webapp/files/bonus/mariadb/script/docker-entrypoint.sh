@@ -12,6 +12,7 @@ mysqld_safe --datadir=/var/lib/mysql/ &
 sleep 20
 eval "echo \"$(cat /tmp/mysql/db_config.sql)\"" | mariadb
 pkill mariadb
+sleep 20
 rm -f /tmp/mysql/db_config.sql
 
 # start mysql in foreground

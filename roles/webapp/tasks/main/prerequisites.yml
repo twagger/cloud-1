@@ -1,6 +1,8 @@
 ---
 # Create a directory named /app
 - name: create directory /app
+  become: yes
+  become_user: root
   file:
     path: /app
     owner: "{{ ansible_user }}"
@@ -8,11 +10,13 @@
   
 # copy files from controler
 - name: copy webapp files
-  copy:
+  synchronize:
     src: "{{ role_path }}/files/"
     dest: "/app"
-    directory_mode:
-    force: yes
+    delete: yes
+  vars:
+    ans_user: "{{ ansible_user }}"
+  delegate_to: localhost
 
 # copy nginx templated conf
 - name: copy nginx templated conf file

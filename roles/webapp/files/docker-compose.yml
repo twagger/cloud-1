@@ -5,8 +5,7 @@ services:
   nginx:
     image: nginx:${TAG}
     build: 
-      context: ./
-      dockerfile: ./bonus/nginx/Dockerfile
+      context: ./bonus/nginx
       args:
         - USER_ID=${USER_ID}
         - GROUP_ID=${GROUP_ID}
@@ -37,6 +36,9 @@ services:
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "--silent"]
       start_period: 20s
+      interval: 30s
+      timeout: 30s
+      retries: 10
     volumes: ['db_data:/var/lib/mysql']
     networks: ['inception_network']
 
@@ -46,8 +48,7 @@ services:
       mariadb:
         condition: service_healthy
     build:
-      context: ./
-      dockerfile: ./bonus/wordpress/Dockerfile
+      context: ./bonus/wordpress
       args:
         - USER_ID=${USER_ID}
         - GROUP_ID=${GROUP_ID}
