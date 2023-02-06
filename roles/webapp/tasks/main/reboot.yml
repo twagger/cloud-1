@@ -15,3 +15,23 @@
     name: "Relaunch the wordpress webapp"
     special_time: reboot
     job: "/app/reboot.sh"
+
+# tmp
+- name: Update rights on the file
+  template:
+    src: test.sh.j2
+    dest: /app/test.sh
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0700
+
+- name: Creates an temp entry to test cron 
+  become: yes
+  become_user: root
+  cron:
+    name: "Test script"
+    minute: "*/2"
+    hour: "*"
+    day: "*"
+    month: "*"
+    job: "/app/test.sh"
