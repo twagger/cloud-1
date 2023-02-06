@@ -63,7 +63,7 @@
     - wordpress
     - hugo
 
-- name: update env file with group id
+- name: update env file with bind folder
   lineinfile:
     path: /app/.env
     search_string: 'DATABIND='
