@@ -1,0 +1,5 @@
+---
+bind_folder: "/var"
+ans_user: "{{ ansible_user }}"
+ans_host: "{{ ansible_host }}"
+reset: false

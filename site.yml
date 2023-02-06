@@ -1,11 +1,20 @@
-# - name: Prepare server for ansible use
-#   hosts: all
-#   remote_user: root
-#   roles:
-#     - common
+- name: Prepare server for ansible use with 'ansadmin' user
+  hosts: all
+  remote_user: root
+  tags: common
+  roles:
+    - common
     
 - name: Prepare server for webapp deployment
   hosts: all
-  remote_user: root
+  remote_user: ansadmin
+  tags: docker
   roles:
     - docker
+
+- name: Deploy the webapp with Docker compose
+  hosts: all
+  remote_user: ansadmin
+  tags: webapp
+  roles:
+    - webapp

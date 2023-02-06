@@ -1,0 +1,12 @@
+---
+# Creation of the folders, modification of the files, ...
+- include_tasks: main/prerequisites.yml
+
+# Down the app (and optionally reset it)
+- include_tasks: main/down_reset.yml
+
+# Building and running containers
+- include_tasks: main/deploy.yml
+
+# Configuring crontab to launch task on startup
+- include_tasks: main/reboot.yml

@@ -1,0 +1,4 @@
+---
+# Up the application
+- name: start the webapp
+  shell: docker compose -f /app/docker-compose.yml --env-file /app/.env up -d

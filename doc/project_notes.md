@@ -103,3 +103,24 @@ we should have a response from all servers with `SUCCESS` and a `pong` response 
 3. create the project structure : roles and playbooks
     - common : installation of docker, docker-compose
     - 
+
+# Add a new user and allow ssh connection
+
+- Create a new ansadmin user
+- add it to sudo group
+- on the local machine, create a specific ssh key for this user :
+
+```sh
+$ ssh-keygen -t rsa -b 2048 -C "<new_user>@<local_host>"
+```
+
+- copy the public key to the `instance_keys` file :
+
+## TMP
+docker compose down
+docker system prune --all --force --volumes
+docker network prune --force
+docker volume prune --force
+docker image prune --force
+rm -rf /var/db/
+rm -rf /var/wordpress/

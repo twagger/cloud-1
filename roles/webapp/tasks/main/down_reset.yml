@@ -1,0 +1,42 @@
+---
+# Launch docker-compose down then up to be sure the changes are loaded
+- name: stop the webapp
+  shell: docker compose -f /app/docker-compose.yml --env-file /app/.env down
+
+# options : type '-e "reset=true"' to reset the app
+- name: optional reset of the application
+  tags: reset
+  block:
+    - name: clean all volumes
+      when: reset
+      shell: docker volume prune --force
+
+    - name: clean all images
+      when: reset
+      shell: docker image prune --force
+
+    - name: clean wp bind
+      become: yes
+      become_user: root
+      when: reset
+      file:
+        path: "{{ bind_folder }}/wordpress"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        state: "{{ item }}"
+      with_items:
+        - absent
+        - directory
+      
+    - name: clean db bind
+      become: yes
+      become_user: root
+      when: reset
+      file:
+        path: "{{ bind_folder }}/db"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        state: "{{ item }}"
+      with_items:
+        - absent
+        - directory

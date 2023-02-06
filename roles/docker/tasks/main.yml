@@ -1,6 +1,8 @@
 ---
 # Cleaning of previous installs
 - name: Remove previous docker installation
+  become: yes
+  become_user: root
   apt:
     name: "{{ docker_uninstall }}"
     state: absent
@@ -8,6 +10,8 @@
 
 # Installation dependencies
 - name: Install docker dependencies with a cache update before
+  become: yes
+  become_user: root
   apt:
     update_cache: yes
     name: "{{ install_deps }}"
@@ -15,17 +19,23 @@
 
 # Add the repo to package manager
 - name: Create a folder for keyrings if it don't exists
+  become: yes
+  become_user: root
   file:
     path: /etc/apt/keyrings
     state: directory
 
 - name: Download the official docker repo gpg key
+  become: yes
+  become_user: root
   uri:
     url: https://download.docker.com/linux/ubuntu/gpg
     dest: /tmp/docker.gpg
     status_code: [200,304]
 
 - name: Install the docker's gpg key
+  become: yes
+  become_user: root
   shell: gpg --dearmor --batch --yes -o /etc/apt/keyrings/docker.gpg /tmp/docker.gpg
 
 - name: get the architecture
@@ -33,6 +43,8 @@
   register: arch
 
 - name: Set up the docker repository
+  become: yes
+  become_user: root
   apt_repository:
     repo: deb [arch={{ arch.stdout }} signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu {{ ansible_facts["lsb"]["codename"] }} stable
     state: present
@@ -40,6 +52,8 @@
 
 # Install docker
 - name: Install docker
+  become: yes
+  become_user: root
   apt:
     update_cache: yes
     name: "{{ docker_install }}"
@@ -47,6 +61,8 @@
 
 # Post install configuration
 - name: Create the docker group
+  become: yes
+  become_user: root
   group:
     name: docker
     state: present
@@ -56,6 +72,8 @@
   register: current_user
 
 - name: add the current user in docker group
+  become: yes
+  become_user: root
   user:
     name: "{{ current_user.stdout }}"
     groups: docker
