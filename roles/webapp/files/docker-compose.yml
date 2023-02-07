@@ -5,8 +5,7 @@ services:
   nginx:
     image: nginx:${TAG}
     build: 
-      context: ./
-      dockerfile: ./bonus/nginx/Dockerfile
+      context: ./srcs/nginx
       args:
         - USER_ID=${USER_ID}
         - GROUP_ID=${GROUP_ID}
@@ -16,8 +15,6 @@ services:
         condition: service_healthy
       adminer:
         condition: service_healthy
-      hugo:
-          condition: service_healthy
     restart: always
     ports: ['443:443']
     volumes: ['wordpress_data:/var/www/wordpress']
@@ -26,7 +23,7 @@ services:
   mariadb:
     image: mariadb:${TAG}
     build: 
-      context: ./requirements/mariadb
+      context: ./srcs/mariadb
       args:
         - USER_ID=${USER_ID}
         - GROUP_ID=${GROUP_ID}
@@ -39,6 +36,9 @@ services:
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "--silent"]
       start_period: 20s
+      interval: 30s
+      timeout: 30s
+      retries: 10
     volumes: ['db_data:/var/lib/mysql']
     networks: ['inception_network']
 
@@ -48,8 +48,7 @@ services:
       mariadb:
         condition: service_healthy
     build:
-      context: ./
-      dockerfile: ./bonus/wordpress/Dockerfile
+      context: ./srcs/wordpress
       args:
         - USER_ID=${USER_ID}
         - GROUP_ID=${GROUP_ID}
@@ -77,7 +76,7 @@ services:
   redis:
     image: redis:${TAG}
     build: 
-      context: ./bonus/redis
+      context: ./srcs/redis
       args:
         - USER_ID=${USER_ID}
         - GROUP_ID=${GROUP_ID}
@@ -85,23 +84,10 @@ services:
     restart: always
     networks: ['inception_network']
 
-  ftp:
-    image: ftp:${TAG}
-    build: 
-      context: ./bonus/ftp
-      args:
-        - USER_ID=${USER_ID}
-        - GROUP_ID=${GROUP_ID}
-    container_name: ftp
-    restart: always
-    ports: ['7042:7042']
-    volumes: ['wordpress_data:/var/www/wordpress']
-    networks: ['inception_network']
-
   adminer:
     image: adminer:${TAG}
     build: 
-      context: ./bonus/adminer
+      context: ./srcs/adminer
       args:
         - USER_ID=${USER_ID}
         - GROUP_ID=${GROUP_ID}
@@ -112,29 +98,11 @@ services:
       interval: 10s
       start_period: 10s
     networks: ['inception_network']
-  
-  hugo:
-    image: hugo:${TAG}
-    build: 
-      context: ./bonus/hugo
-      args:
-        - USER_ID=${USER_ID}
-        - GROUP_ID=${GROUP_ID}
-        - SITE_URL=${WORDPRESS_SITE_URL}
-    container_name: hugo
-    healthcheck:
-      test: netstat -an | grep 1313 > /dev/null; if [ 0 != $$? ]; then exit 1; fi;
-      interval: 10s
-      start_period: 10s
-    restart: always
-    networks: ['inception_network']
-    environment:
-      - SITE_URL=${WORDPRESS_SITE_URL}
     
   cadvisor:
     image: cadvisor:${TAG}
     build: 
-      context: ./bonus/cadvisor
+      context: ./srcs/cadvisor
       args:
         - USER_ID=${USER_ID}
         - GROUP_ID=${GROUP_ID}

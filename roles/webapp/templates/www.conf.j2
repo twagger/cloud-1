@@ -26,13 +26,6 @@ server {
         proxy_redirect  ~^/(.*)/ /cadvisor/$1;
     }
 
-    # proxy trafic on /me with hugo server
-    location            ^~ /me
-    {
-        include         /etc/nginx/proxy_params;
-        proxy_pass      http://hugo:1313/me;
-    }
-
     # pass PHP scripts to Adminer FastCGI server
 	location			^~ /adminer
 	{

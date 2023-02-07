@@ -1,0 +1,13 @@
+---
+# create folders for data binding
+- name: create database and wp bind folder
+  become: yes
+  become_user: root
+  file:
+    path: "{{ bind_folder }}/{{ item }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    state: directory
+  with_items:
+    - db
+    - wordpress

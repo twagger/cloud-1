@@ -1,5 +1,5 @@
 ---
-# Launch docker-compose down then up to be sure the changes are loaded
+# launch docker-compose down then up to be sure the changes are loaded
 - name: stop the webapp
   shell: docker compose -f /app/docker-compose.yml --env-file /app/.env down
 
