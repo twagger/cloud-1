@@ -1,5 +1,5 @@
 ---
-# Specific user to work with ansible
+# specific user to work with ansible
 - name: Add a user for ansible tasks
   user:
     name: "{{ user }}"
@@ -8,7 +8,7 @@
     create_home: yes
     state: present
 
-# Create .ssh folder for the user
+# create .ssh folder for the user
 - name: Create a folder for ssh if it don't exists
   file:
     path: /home/{{ user }}/.ssh/

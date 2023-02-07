@@ -16,9 +16,3 @@ docker_install:
   - docker-ce-cli
   - containerd.io
   - docker-compose-plugin
-
-# variables from q commands (executed when called by the playbook at 
-# runtime)
-# arch: "{{ lookup('lines', 'dpkg --print-architecture') }}"
-# release: "{{ lookup('lines', 'lsb_release -cs') }}"
-# current_user: "{{ lookup('lines', 'echo $USER') }}"
