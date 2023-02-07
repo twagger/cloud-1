@@ -17,11 +17,13 @@
     mode: 0700
     state: directory
 
-# Create authorized_keys file with user's public key in it
+# add authorized_keys file with user's public key in it (create)
 - name: Create authorized_keys file
-  copy:
-    src: "{{ public_key }}"
+  lineinfile:
     dest: "/home/{{ user }}/.ssh/authorized_keys"
+    line: "{{ public_key }}"
+    state: present
+    create: yes
 
 # restart ssh service
 - name : Restart ssh
