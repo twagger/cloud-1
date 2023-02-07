@@ -207,13 +207,22 @@ You should encrypt sensitive or secret variables with Ansible Vault. However, en
 ### Use in our project
 
 Encryption of env variables in the vault file:
-```Shell
-ansible-vault encrypt --vault-password-file dev_pwd env_vars/vault_env
+```shell
+ansible-vault encrypt --vault-password-file vault_pwd roles/webapp/files/env_vars/vault
 ```
 
 Then use the variables in the file /env_vars/vault_env in playbooks.
 
 Decryption of the vault file (permanent):
-```Shell
-ansible-vault decrypt --vault-password-file dev_pwd env_vars/vault_env 
+```shell
+ansible-vault decrypt --vault-password-file vault_pwd roles/webapp/files/env_vars/vault
 ```
+
+Use with ansible playook:
+```shell
+ansible-playbook site.yml --vault-password-file vault_pwd --tags webapp
+```
+
+
+
+ansible-vault decrypt ---ask-vault-pass 

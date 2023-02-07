@@ -3,3 +3,4 @@ bind_folder: "/var"
 ans_user: "{{ ansible_user }}"
 ans_host: "{{ ansible_host }}"
 reset: false
+decrypted_env_file: "{{ lookup('lines', 'ansible-vault decrypt --vault-password-file vault_pwd roles/webapp/files/.env --output=-') }}"
