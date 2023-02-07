@@ -79,3 +79,13 @@
     groups: docker
     append: yes
     state: present
+
+# chown the docker socket with ansible admin
+- name: Chown the docker socket with ansible admin
+  become: yes
+  become_user: root
+  file:
+    path: /var/run/docker.sock
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    state: file
