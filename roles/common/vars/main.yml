@@ -2,4 +2,4 @@
 user: ansadmin
 user_comment: Ansible administrator
 user_shell: /bin/bash
-public_key: ~/.ssh/id_rsa_ans.pub
+public_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"

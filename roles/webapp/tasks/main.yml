@@ -1,12 +1,14 @@
 ---
-# Creation of the folders, modification of the files, ...
-- include_tasks: main/prerequisites.yml
+# Prerequisites
+- include_tasks: main/01_file_copy.yml
+- include_tasks: main/02_env_file_update.yml
+- include_tasks: main/03_bind_folders.yml
 
-# Down the app (and optionally reset it)
-- include_tasks: main/down_reset.yml
+# down the app (and optionally reset it)
+- include_tasks: main/04_down_reset.yml
 
-# Building and running containers
-- include_tasks: main/deploy.yml
+# buildand launch containers
+- include_tasks: main/05_deploy.yml
 
-# Configuring crontab to launch task on startup
-- include_tasks: main/reboot.yml
+# configuring crontab to launch task on startup
+- include_tasks: main/06_launch_on_reboot.yml

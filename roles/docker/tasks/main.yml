@@ -1,5 +1,5 @@
 ---
-# Cleaning of previous installs
+# cleaning of previous installs
 - name: Remove previous docker installation
   become: yes
   become_user: root
@@ -8,7 +8,7 @@
     state: absent
     purge: yes
 
-# Installation dependencies
+# installation dependencies
 - name: Install docker dependencies with a cache update before
   become: yes
   become_user: root
@@ -17,7 +17,7 @@
     name: "{{ install_deps }}"
     state: present
 
-# Add the repo to package manager
+# add the repo to package manager
 - name: Create a folder for keyrings if it don't exists
   become: yes
   become_user: root
@@ -50,7 +50,7 @@
     state: present
     filename: docker
 
-# Install docker
+# install docker
 - name: Install docker
   become: yes
   become_user: root
@@ -59,7 +59,7 @@
     name: "{{ docker_install }}"
     state: present
 
-# Post install configuration
+# post install configuration
 - name: Create the docker group
   become: yes
   become_user: root

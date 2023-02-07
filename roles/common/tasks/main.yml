@@ -1,5 +1,5 @@
 ---
-# Specific user to work with ansible
+# specific user to work with ansible
 - name: Add a user for ansible tasks
   user:
     name: "{{ user }}"
@@ -8,7 +8,7 @@
     create_home: yes
     state: present
 
-# Create .ssh folder for the user
+# create .ssh folder for the user
 - name: Create a folder for ssh if it don't exists
   file:
     path: /home/{{ user }}/.ssh/
@@ -17,11 +17,13 @@
     mode: 0700
     state: directory
 
-# Create authorized_keys file with user's public key in it
+# add authorized_keys file with user's public key in it (create)
 - name: Create authorized_keys file
-  copy:
-    src: "{{ public_key }}"
+  lineinfile:
     dest: "/home/{{ user }}/.ssh/authorized_keys"
+    line: "{{ public_key }}"
+    state: present
+    create: yes
 
 # restart ssh service
 - name : Restart ssh

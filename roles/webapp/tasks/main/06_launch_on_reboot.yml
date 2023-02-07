@@ -1,5 +1,5 @@
 ---
-# Specific job to relaunch the app on startup if the server reboots
+# specific job to relaunch the app on startup if the server reboots
 - name: Update rights on the file
   template:
     src: reboot.sh.j2

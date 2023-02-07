@@ -1,0 +1,35 @@
+---
+# create a directory named /app
+- name: create directory /app
+  become: yes
+  become_user: root
+  file:
+    path: /app
+    owner: "{{ ansible_user }}"
+    state: directory
+  
+# copy files from controler
+- name: copy webapp files
+  synchronize:
+    src: "{{ role_path }}/files/webapp_files/"
+    dest: "/app"
+    delete: yes
+  vars:
+    ans_user: "{{ ansible_user }}"
+  delegate_to: localhost
+
+# copy nginx templated conf
+- name: copy nginx templated conf file
+  template:
+    src: www.conf.j2
+    dest: /app/srcs/nginx/conf/www.conf
+
+# copy the decrypted vars to the .env file on the remote server
+- name: debug
+  debug:
+    msg: "{{ decrypted_env_file | split(',') | join('\n') }}"
+
+- name: copy decrypted vars of the register to the remote machine .env
+  copy:
+    content: "{{ decrypted_env_file | split(',') | join('\n') }}"
+    dest: /app/.env
