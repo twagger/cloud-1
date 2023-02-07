@@ -22,4 +22,4 @@
 - name: copy nginx templated conf file
   template:
     src: www.conf.j2
-    dest: /app/bonus/nginx/conf/www.conf
+    dest: /app/srcs/nginx/conf/www.conf

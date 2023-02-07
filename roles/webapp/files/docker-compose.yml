@@ -5,7 +5,7 @@ services:
   nginx:
     image: nginx:${TAG}
     build: 
-      context: ./bonus/nginx
+      context: ./srcs/nginx
       args:
         - USER_ID=${USER_ID}
         - GROUP_ID=${GROUP_ID}
@@ -23,7 +23,7 @@ services:
   mariadb:
     image: mariadb:${TAG}
     build: 
-      context: ./bonus/mariadb
+      context: ./srcs/mariadb
       args:
         - USER_ID=${USER_ID}
         - GROUP_ID=${GROUP_ID}
@@ -48,7 +48,7 @@ services:
       mariadb:
         condition: service_healthy
     build:
-      context: ./bonus/wordpress
+      context: ./srcs/wordpress
       args:
         - USER_ID=${USER_ID}
         - GROUP_ID=${GROUP_ID}
@@ -76,7 +76,7 @@ services:
   redis:
     image: redis:${TAG}
     build: 
-      context: ./bonus/redis
+      context: ./srcs/redis
       args:
         - USER_ID=${USER_ID}
         - GROUP_ID=${GROUP_ID}
@@ -87,7 +87,7 @@ services:
   adminer:
     image: adminer:${TAG}
     build: 
-      context: ./bonus/adminer
+      context: ./srcs/adminer
       args:
         - USER_ID=${USER_ID}
         - GROUP_ID=${GROUP_ID}
@@ -102,7 +102,7 @@ services:
   cadvisor:
     image: cadvisor:${TAG}
     build: 
-      context: ./bonus/cadvisor
+      context: ./srcs/cadvisor
       args:
         - USER_ID=${USER_ID}
         - GROUP_ID=${GROUP_ID}
