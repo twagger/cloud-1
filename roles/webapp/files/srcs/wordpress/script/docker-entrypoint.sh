@@ -22,7 +22,7 @@ chmod +x wp-cli.phar
 
 # additionnal configuration for redis cache
 sed -i "s/.*WP_CACHE_KEY_SALT.*$/define\( 'WP_CACHE_KEY_SALT', 'twagner.42.fr' \);/" /var/www/wordpress/wp-config.php
-sed -i "s/\"stop editing\" line. \*\//&\ndefine( 'WP_REDIS_HOST', 'redis' );/" /var/www/wordpress/wp-config.php
+sed -i 's|\/\* Add any custom values between this line and the "stop editing" line. \*\/|\/\* Add any custom values between this line and the "stop editing" line. \*\/\ndefine( '\''WP_REDIS_HOST'\'', '\''redis'\'' );|g' /var/www/wordpress/wp-config.php
 
 # install wordpress
 ./wp-cli.phar core install \
@@ -32,6 +32,10 @@ sed -i "s/\"stop editing\" line. \*\//&\ndefine( 'WP_REDIS_HOST', 'redis' );/" /
     --admin_password=$WP_DB_ADM_PASSWORD \
     --admin_email=$WP_ADMIN_EMAIL \
     --skip-email
+
+# force to update url in case the server have a new ip
+./wp-cli.phar option update home $WP_SITE_URL
+./wp-cli.phar option update siteurl $WP_SITE_URL
 
 # add a non root user
 eval "echo \"$(cat /tmp/mysql/wp_db_user.sql)\"" > /tmp/mysql/import.sql

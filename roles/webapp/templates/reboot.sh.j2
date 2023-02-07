@@ -3,5 +3,14 @@
 # down the app if it is up
 docker compose -f /app/docker-compose.yml down
 
-# relaunch with ansadmin user
+# update app configuration with possible new host IP
+new_ip=$(curl -s https://checkip.amazonaws.com)
+old_ip=$(awk '/WORDPRESS_SITE_URL=https:\/\//{print $NF}')
+# ENV file update
+sed -i "s|.*WORDPRESS_SITE_URL=.*|WORDPRESS_SITE_URL=https://$new_ip|g" /app/.env
+# NGINX config update (need to rebuild nginx image as this file is part of it)
+sed -i "s|.*server_name.*|server_name   $new_ip;|g" /app/srcs/nginx/conf/www.conf
+
+# relaunch with ansadmin user and rebuild nginx and wordpress image
+docker rmi $(docker images | awk '/nginx/ {print $3}')
 sudo -u {{ans_user}} docker compose -f /app/docker-compose.yml --env-file /app/.env up -d
