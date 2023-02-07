@@ -25,10 +25,6 @@
     dest: /app/srcs/nginx/conf/www.conf
 
 # copy the decrypted vars to the .env file on the remote server
-- name: debug
-  debug:
-    msg: "{{ decrypted_env_file | split(',') | join('\n') }}"
-
 - name: copy decrypted vars of the register to the remote machine .env
   copy:
     content: "{{ decrypted_env_file | split(',') | join('\n') }}"
