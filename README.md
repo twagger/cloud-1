@@ -73,9 +73,10 @@ ansible-playbook site.yml --tags webapp # select some tasks
 # What we could have used
 
 ## Handlers (with notify)
-- What we could h
+- What we could have done in this project with handlers
 
 ## Conditional tasks (when)
+- What we could have done in this project with conditional tasks
 
 # Authors
 
@@ -89,10 +90,9 @@ ansible-playbook site.yml --tags webapp # select some tasks
 
 # Resources
 
-TechWorld with Nana
-VRTechnologies For Automation
-Learn Linux TV
-Ansible best practices
-All modules page
-All lookup plugins
-Ansible vault
+* [TechWorld with Nana](https://youtu.be/1id6ERvfozo)
+* [VRTechnologies For Automation](https://youtube.com/playlist?list=PL2qzCKTbjutIyQAe3GglWISLnLTQLGm7e)
+* [Learn Linux TV](https://youtube.com/playlist?list=PLT98CRl2KxKEUHie1m24-wkyHpEsa4Y70)
+* [Ansible best practices](https://docs.ansible.com/ansible/2.8/user_guide/playbooks_best_practices.html)
+* [All modules page](https://docs.ansible.com/ansible/2.9/modules/list_of_all_modules.html)
+* [Ansible vault](https://blog.stephane-robert.info/post/ansible-vault/)
