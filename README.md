@@ -1,6 +1,6 @@
 # Welcome to cloud-François ☁️🕺🏼
 
-What the project is about.
+The project is about using Ansible to deploy a multicontainer application to a distant cloud server.
 
 # Installation instructions
 
@@ -41,7 +41,14 @@ ansible-playbook site.yml --tags webapp # select some tasks
 # Main notions used in the project
 
 ## Virtual environment (Conda)
-- What is the interest (specfic version of python, full install of ansible on a workstation on which we are non root, fast setup)
+- As we are working on shared school machines, we used [Conda](https://docs.conda.io/en/latest/) in this project to setup a virtual environment containing all the necessary packages (python and ansible + dependencies).
+
+In order for the environment to be easy to setup, this project contain a setup script in `/setup` :
+
+```sh
+./setup/env_install.sh && source ~/.zshrc
+conda activate 42Cloud-$USER
+```
 
 ## Ansible playbook
 - the main playbook `site.yml` is located at the root of the project and execute different sets of `plays` named roles (see more in Ansible roles below).
@@ -53,12 +60,152 @@ ansible-playbook site.yml --tags webapp # select some tasks
 - in the main playbook `site.yml`, the different roles are executed all together when playing the playbook. However, we added `tags` in order to call only one play at a time. For instance, to relaunch the webapp role only, we used `--tags webapp`
 
 ## Ansible tasks and modules
-- what is a task
-- local / remote
-- state
-- what a module does
-- task organization
-- task general options (register, become, delegate_to, vars, with_items)
+
+The main concept we used in Ansible is the Task. A task is a single command you want to execute on a remote host.
+
+The tasks are working with **modules** which allow you to execute specific actions on a machine (like copying a file, creating a folder, launching a service, ...)
+
+List of supported modules : [All modules](https://docs.ansible.com/ansible/2.9/modules/list_of_all_modules.html)
+
+Examples of module with their attributes :
+
+```yml
+- name: start nginx
+    service:
+    name: nginx
+    state: started
+
+- name: Add a user for ansible tasks
+  user:
+    name: "admin"
+    comment: "Ansible admin}"
+    shell: "/bin/bash"
+    create_home: yes
+    state: present
+```
+
+### State
+
+The modules usually have a **state**. The state is defining the state we want to have the resource by the action of the module. It is recommanded by the Ansible doc to always specify the state if it is possible, even if the default value fits.
+
+Example of states :
+ - File : present / absent
+ - Apt : present / absent
+
+By using a mudule, we are just specifying in which state we want the resource to be and Ansible will "translate" this to the necessary chain of commands in order to achieve the proper state. If your state s 'present' and the file you want to create is already here, it will consider the state as ok and go to the next task **without having an unnecessary action**.
+
+### Organization
+
+It is recommanded to organize tasks in roles so they are easier to manage and reuse. This is explained in the next part.
+
+However, you have the possibility to split playbooks that are to huge into 'sub-playbooks' that can be imported onto a global one.
+
+Here is an example from the project :
+
+*main.yml*
+```yml
+---
+# Prerequisites
+- include_tasks: 
+- include_tasks: main/02_env_file_update.yml
+- include_tasks: main/03_bind_folders.yml
+
+# down the app (and optionally reset it)
+- include_tasks: main/04_down_reset.yml
+
+# buildand launch containers
+- include_tasks: main/05_deploy.yml
+
+# configuring crontab to launch task on startup
+- include_tasks: main/06_launch_on_reboot.yml
+```
+
+*main/01_file_copy.yml*
+```yml
+---
+# create a directory named /app
+- name: create directory /app
+  become: yes
+  become_user: root
+  file:
+    path: /app
+    owner: "{{ ansible_user }}"
+    state: directory
+  
+# copy files from controler
+- name: copy webapp files
+  synchronize:
+    src: "{{ role_path }}/files/webapp_files/"
+    dest: "/app"
+    delete: yes
+  vars:
+    ans_user: "{{ ansible_user }}"
+  delegate_to: localhost
+
+ ...
+```
+
+### Task general options
+
+You have the possibility to use several general 'options' on tasks. Here are the ones we used in the project :
+
+- **register** : to register the output of a task so it can be used as a variable in other tasks
+
+```yml
+- name: get the current user
+  shell: echo $USER
+  register: current_user
+
+- name: add the current user in docker group
+  become: yes
+  become_user: root
+  user:
+    name: "{{ current_user.stdout }}"
+    groups: docker
+    append: yes
+    state: present
+```
+
+- **become / become_user** : to execute a distant task as a specific user
+
+```yml
+- name: create directory /app
+  become: yes
+  become_user: root
+  file:
+    path: /app
+    owner: "{{ ansible_user }}"
+    state: directory
+```
+
+- **delegate_to** : to execute the task on a certain host (even on localhost)
+
+```yml
+- name: copy webapp files
+  synchronize:
+    src: "{{ role_path }}/files/webapp_files/"
+    dest: "/app"
+    delete: yes
+  vars:
+    ans_user: "{{ ansible_user }}"
+  delegate_to: localhost
+```
+
+- **with_items** : to loop over the items of a list
+
+```yml
+- name: create database and wp bind folder
+  become: yes
+  become_user: root
+  file:
+    path: "{{ bind_folder }}/{{ item }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    state: directory
+  with_items:
+    - db
+    - wordpress
+```
 
 ## Ansible roles
 - what is a role
