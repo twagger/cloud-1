@@ -19,6 +19,11 @@ echo -n "the_secret" > vault_pwd
 
 3. Check that the host file containts valid public server addresses
 4. Verify that you can connect as root with ssh to every server in **hosts** file
+	
+	1. In case you get the error "UNREACHABLE [...] Host key verification failed", use the following command to remove the concerned host from your known hosts file:
+	```sh
+	ssh-keygen -f "/mnt/nfs/homes/$USER/.ssh/known_hosts" -R "XX.XXX.XX.XXX"    
+	```
 5. Launch ansible playbook
 
 ```sh
