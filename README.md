@@ -1,4 +1,4 @@
-# Welcome to cloud-François ☁️🕺🏼
+ Welcome to cloud-François ☁️🕺🏼
 
 The project is about using Ansible to deploy a multicontainer application to a distant cloud server.
 
@@ -208,9 +208,33 @@ You have the possibility to use several general 'options' on tasks. Here are the
 ```
 
 ## Ansible roles
-- what is a role
-- interest of roles
-- inner organization
+
+The concept of role in Ansible allows to categorize the hosts based on their intended purpose.
+
+It is an "organization" feature that makes the whole thing cleaner and easier to manage. Below is the classic structure of a role according to ansible doc :
+
+```txt
+    |── common/                   # this hierarchy represents a "role"
+    |   |── tasks/     
+    |   |   └── main.yml          #  <-- tasks file can include smaller files if warranted
+    |   |── handlers/         
+    |   |   └── main.yml          #  <-- handlers file (repetitive tasks that can be called by other tasks)
+    |   |── templates/            #  <-- files for use with the template resource to configure systems
+    |   |   └── ntp.conf.j2       #  <------- templates end in .j2
+    |   |── files/            
+    |   |   |── bar.txt           #  <-- files for use with the copy resource
+    |   |   └── foo.sh            #  <-- script files for use with the script resource
+    |   |── vars/             
+    |   |   └── main.yml          #  <-- variables associated with this role
+    |   |── defaults/         
+    |   |   └── main.yml          #  <-- default lower priority variables for this role
+    |   |── meta/             
+    |   |   └── main.yml          #  <-- role dependencies
+    |   |── library/              # roles can also include custom modules
+    |   |── module_utils/         # roles can also include custom module_utils
+    |   └── lookup_plugins/       # or other types of plugins, like lookup in this case
+    └──
+```
 
 ## Variables
 - There two directories in each role dedicated to variables, default and vars. The `default` file is used to store default values for having a fallback value. The `vars` file is used to set up variables that will be used in the plays. When set up, `vars` variables overwrite `default` values.
@@ -235,10 +259,53 @@ You have the possibility to use several general 'options' on tasks. Here are the
 - we could have added roles dedicated to each container in order to administrate them separately from our controller machine using Ansible (logs, stop, restart...). It would enable us to check container's state without connecting to the remote server.
 
 ## Handlers (with notify)
-- What we could have done in this project with handlers
+
+Sometimes you want a task to run only when a change is made on a machine. For example, you may want to restart a service if a task updates the configuration of that service, but not if the configuration is unchanged.
+
+In this project, we could have use this to reload ssh on the remote server only if the `authorized_keys` file changed.
+
+Here is the command to execute that. Ansible use **notify** to reference and call the handler :
+
+in **tasks/main.yml**
+```yml
+- name: Create authorized_keys file
+  lineinfile:
+    dest: "/home/{{ user }}/.ssh/authorized_keys"
+    line: "{{ public_key }}"
+    state: present
+    create: yes
+   notify:
+   - Restart ssh
+
+- name: Ensure ssh is running
+  service:
+    name: ssh
+    state: started
+```
+
+in **handlers/main.yml**
+```yml
+handlers:
+- name: Restart ssh
+  service:
+    name: ssh
+    state: restarted
+```
 
 ## Conditional tasks (when)
-- What we could have done in this project with conditional tasks
+
+In a playbook, you may want to execute different tasks, or have different goals, depending on the value of a fact (data about the remote system), a variable, or the result of a previous task.
+
+In this project, it could have been helpful to limit the changes when playing the playbook (test a thing in a task and execute the next task according to the result of the first task), or to be more flexible about some facts on the remote server (OS for example).
+
+Here is a classic example of conditional task based on an ansible fact. In a task, you can use **when** to specify a condition :
+
+```yml
+tasks:
+  - name: Shut down Debian flavored systems
+    ansible.builtin.command: /sbin/shutdown -t now
+    when: ansible_facts['os_family'] == "Debian"
+```
 
 # Authors
 
