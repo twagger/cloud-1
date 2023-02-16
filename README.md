@@ -1,6 +1,6 @@
- Welcome to cloud-François ☁️🕺🏼
+# Welcome to cloud-François ☁️🕺🏼
 
-The project is about using Ansible to deploy a multicontainer application to a distant cloud server.
+The project is about using **Ansible** to deploy a multicontainer application to a distant cloud server.
 
 # Installation instructions
 
