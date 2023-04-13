@@ -12,9 +12,9 @@
   roles:
     - docker
 
-- name: Deploy the webapp with Docker compose
-  hosts: all
-  remote_user: ansadmin
-  tags: webapp
-  roles:
-    - webapp
+# - name: Deploy the webapp with Docker compose
+#   hosts: all
+#   remote_user: ansadmin
+#   tags: webapp
+#   roles:
+#     - webapp

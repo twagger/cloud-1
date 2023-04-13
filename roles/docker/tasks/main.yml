@@ -25,11 +25,19 @@
     path: /etc/apt/keyrings
     state: directory
 
+- name: get the architecture
+  shell: dpkg --print-architecture
+  register: arch
+
+- name: get the distro
+  shell: cat /etc/os-release | grep ^ID= | awk '{split($0,a,"="); print a[2]}'
+  register: distro
+
 - name: Download the official docker repo gpg key
   become: yes
   become_user: root
   uri:
-    url: https://download.docker.com/linux/ubuntu/gpg
+    url: https://download.docker.com/linux/{{ distro.stdout }}/gpg
     dest: /tmp/docker.gpg
     status_code: [200,304]
 
@@ -38,15 +46,11 @@
   become_user: root
   shell: gpg --dearmor --batch --yes -o /etc/apt/keyrings/docker.gpg /tmp/docker.gpg
 
-- name: get the architecture
-  shell: dpkg --print-architecture
-  register: arch
-
 - name: Set up the docker repository
   become: yes
   become_user: root
   apt_repository:
-    repo: deb [arch={{ arch.stdout }} signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu {{ ansible_facts["lsb"]["codename"] }} stable
+    repo: deb [arch={{ arch.stdout }} signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/{{ distro.stdout }} {{ ansible_facts["lsb"]["codename"] }} stable
     state: present
     filename: docker
 
