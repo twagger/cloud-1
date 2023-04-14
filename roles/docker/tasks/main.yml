@@ -91,5 +91,5 @@
   file:
     path: /var/run/docker.sock
     owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    group: docker
     state: file
